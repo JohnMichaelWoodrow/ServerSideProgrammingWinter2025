@@ -1,0 +1,37 @@
+body {
+    font-family: Arial, sans-serif;
+    margin: 20px;
+}
+
+#controls {
+    margin-bottom: 20px;
+}
+
+.course-card {
+    margin: 10px 0;
+    padding: 15px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    background-color: #f9f9f9;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.course-card h3 {
+    margin: 0 0 10px 0;
+    color: #333;
+    cursor: pointer;
+}
+
+.course-details {
+    margin-top: 10px;
+    padding-left: 10px;
+    display: none;
+}
+
+.course-details.active {
+    display: block;
+}
+
+.course-details p {
+    margin: 5px 0;
+}
