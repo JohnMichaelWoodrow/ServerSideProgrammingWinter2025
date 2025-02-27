@@ -1,40 +1,42 @@
+const mongoose = require('mongoose');
 const Student = require('../models/studentModel');
 const Course = require('../models/coursesModel');
 
 // GET all students
 const getStudents = async (req, res) => {
     try {
-        const students = await Student.find({})
-            .populate({
-                path: 'registeredCourses',
-                select: 'courseName -_id' // Excludes ID field
-            });
+        const students = await Student.find({}).populate({ path: 'registeredCourses', select: 'courseName -_id' });
         res.status(200).json(students);
     } catch (err) {
         res.status(500).json({ message: err.message });
     }
 };
 
-// GET student by ID
+// GET student by ID or schoolId
 const getStudentById = async (req, res) => {
     try {
-        const student = await Student.findById(req.params.id).populate({
-                path: 'registeredCourses',
-                select: 'courseName -_id'  // Excludes ID field
-            });
-        if (!student) {
-            return res.status(404).json({ message: "Student not found" });
-        }
+        const student = await Student.findById(req.params.id).populate('registeredCourses');
+        if (!student) return res.status(404).json({ message: "Student not found" });
         res.status(200).json(student);
     } catch (err) {
         res.status(500).json({ message: err.message });
     }
 };
 
-// POST create a new student
+const getStudentBySchoolId = async (req, res) => {
+    try {
+        const student = await Student.findOne({ schoolId: req.params.schoolId }).populate('registeredCourses');
+        if (!student) return res.status(404).json({ message: "Student not found" });
+        res.status(200).json(student);
+    } catch (err) {
+        res.status(500).json({ message: err.message });
+    }
+};
+
+// POST create a new student (single or bulk insert)
 const createStudent = async (req, res) => {
     try {
-        console.log("Received student data:", req.body); // Debugging log
+        console.log("Received student data:", req.body); 
 
         if (Array.isArray(req.body)) {
             // Handle bulk insert
@@ -52,37 +54,47 @@ const createStudent = async (req, res) => {
     }
 };
 
-
-// PUT update a student by ID
+// PUT update student by either ObjectId or schoolId
 const updateStudent = async (req, res) => {
     try {
-        const updatedStudent = await Student.findByIdAndUpdate(req.params.id, req.body, { new: true });
-        if (!updatedStudent) {
-            return res.status(404).json({ message: "Student not found" });
+        const { id, schoolId } = req.params;
+        
+        let filter;
+        if (id && mongoose.Types.ObjectId.isValid(id)) {
+            filter = { _id: id };
+        } else if (schoolId) {
+            filter = { schoolId: Number(schoolId) };
+        } else {
+            return res.status(400).json({ message: "Invalid ID or School ID" });
         }
-        res.status(200).json(updatedStudent);
+
+        const student = await Student.findOneAndUpdate(filter, req.body, { new: true, runValidators: true });
+
+        if (!student) return res.status(404).json({ message: "Student not found" });
+
+        res.status(200).json(student);
     } catch (err) {
         res.status(500).json({ message: err.message });
     }
 };
 
-// DELETE a student by schoolId or ObjectId
+// DELETE student by ObjectId or schoolId
 const deleteStudent = async (req, res) => {
     try {
-        const { schoolId, id } = req.params; // Allow deletion by either schoolId or _id
-
+        const { id, schoolId } = req.params;
+        
         let student;
-        if (schoolId) {
-            student = await Student.findOneAndDelete({ schoolId: schoolId });
-        } else if (id) {
+        if (id && mongoose.Types.ObjectId.isValid(id)) {
             student = await Student.findByIdAndDelete(id);
+        } else if (schoolId) {
+            student = await Student.findOneAndDelete({ schoolId: Number(schoolId) });
+        } else {
+            return res.status(400).json({ message: "Invalid ID or School ID" });
         }
 
-        if (!student) {
-            return res.status(404).json({ message: "Student not found" });
-        }
+        if (!student) return res.status(404).json({ message: "Student not found" });
 
-        // Also remove student from any enrolled courses
+        // Also remove any enrolled courses
         await Course.updateMany(
             { enrolledStudents: student._id },
             { $pull: { enrolledStudents: student._id } }
@@ -94,25 +106,22 @@ const deleteStudent = async (req, res) => {
     }
 };
 
-
-//  Register a student to a course
+// POST register a student or students to courses
 const registerStudentForCourse = async (req, res) => {
     try {
-        // If req.body is an array, handle bulk registration
         if (Array.isArray(req.body)) {
             let results = [];
+
             for (const reg of req.body) {
                 const { schoolId, courseName } = reg;
                 
-                // Find student by schoolId
-                const student = await Student.findOne({ schoolId: schoolId }).populate('registeredCourses');
+                const student = await Student.findOne({ schoolId }).populate('registeredCourses');
                 if (!student) {
                     results.push({ schoolId, courseName, status: `Student with schoolId ${schoolId} not found` });
                     continue;
                 }
                 
-                // Find course by courseName
-                const course = await Course.findOne({ courseName: courseName });
+                const course = await Course.findOne({ courseName });
                 if (!course) {
                     results.push({ schoolId, courseName, status: `Course ${courseName} not found` });
                     continue;
@@ -136,12 +145,13 @@ const registerStudentForCourse = async (req, res) => {
                     }
                     if (conflict) break;
                 }
+                
                 if (conflict) {
                     results.push({ schoolId, courseName, status: "Schedule conflict detected!" });
                     continue;
                 }
                 
-                // Register student for course by pushing the object IDs
+                // Register student for the course
                 student.registeredCourses.push(course._id);
                 course.enrolledStudents.push(student._id);
                 await student.save();
@@ -152,15 +162,17 @@ const registerStudentForCourse = async (req, res) => {
         } else {
             // Handle single registration
             const { schoolId, courseName } = req.body;
-            const student = await Student.findOne({ schoolId: schoolId }).populate('registeredCourses');
+            
+            const student = await Student.findOne({ schoolId }).populate('registeredCourses');
             if (!student) {
                 return res.status(404).json({ message: `Student with schoolId ${schoolId} not found` });
             }
-            const course = await Course.findOne({ courseName: courseName });
+
+            const course = await Course.findOne({ courseName });
             if (!course) {
                 return res.status(404).json({ message: `Course ${courseName} not found` });
             }
-            
+
             // Check for schedule conflicts
             for (const registeredCourse of student.registeredCourses) {
                 for (const session of registeredCourse.sessions) {
@@ -175,12 +187,13 @@ const registerStudentForCourse = async (req, res) => {
                     }
                 }
             }
-            
-            // Register student for course by pushing the object IDs
+
+            // Register student for the course
             student.registeredCourses.push(course._id);
             course.enrolledStudents.push(student._id);
             await student.save();
             await course.save();
+            
             return res.status(200).json({ message: 'Registration successful' });
         }
     } catch (error) {
@@ -188,6 +201,7 @@ const registerStudentForCourse = async (req, res) => {
     }
 };
 
+// DELETE unregister students from courses (bulk or single)
 const unregisterStudentsFromCourses = async (req, res) => {
     try {
         if (!Array.isArray(req.body)) {
@@ -198,24 +212,22 @@ const unregisterStudentsFromCourses = async (req, res) => {
         for (const reg of req.body) {
             const { schoolId, courseName } = reg;
 
-            const student = await Student.findOne({ schoolId: schoolId });
+            const student = await Student.findOne({ schoolId });
             if (!student) {
                 results.push({ schoolId, courseName, status: `Student with schoolId ${schoolId} not found` });
                 continue;
             }
 
-            const course = await Course.findOne({ courseName: courseName });
+            const course = await Course.findOne({ courseName });
             if (!course) {
                 results.push({ schoolId, courseName, status: `Course ${courseName} not found` });
                 continue;
             }
 
-            // Remove course from student's registeredCourses array
             student.registeredCourses = student.registeredCourses.filter(
                 (courseId) => !courseId.equals(course._id)
             );
 
-            // Remove student from course's enrolledStudents array
             course.enrolledStudents = course.enrolledStudents.filter(
                 (studentId) => !studentId.equals(student._id)
             );
@@ -232,12 +244,10 @@ const unregisterStudentsFromCourses = async (req, res) => {
     }
 };
 
-
-
-
 module.exports = {
     getStudents,
     getStudentById,
+    getStudentBySchoolId,
     createStudent,
     updateStudent,
     deleteStudent,

@@ -10,12 +10,11 @@ const {
 
 const courseRouter = express.Router();
 
-// Define routes
-courseRouter.get('/', getCourses);                  
-courseRouter.get('/id=:id', getCourseById);         
-courseRouter.get('/name=:name', getCoursesByName);   
-courseRouter.post('/', createCourse);               
-courseRouter.put('/id=:id', updateCourse);           
-courseRouter.delete('/id=:id', deleteCourse);         
+courseRouter.get('/', getCourses);
+courseRouter.get('/id/:id', getCourseById);
+courseRouter.get('/courseName/:courseName', getCoursesByName);
+courseRouter.post('/', createCourse);
+courseRouter.put('/:id?/:courseName?', updateCourse);
+courseRouter.delete('/:id?/:courseName?', deleteCourse);
 
 module.exports = courseRouter;

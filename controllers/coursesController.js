@@ -1,56 +1,50 @@
-const Courses = require('../models/coursesModel');
+const mongoose = require('mongoose');
+const Course = require('../models/coursesModel');
+const Student = require('../models/studentModel');
 
 // GET all courses
 const getCourses = async (req, res) => {
     try {
-        const courses = await Courses.find({}).populate({
-                path: 'enrolledStudents',
-                select: 'schoolId -_id'  // Excludes ID field
-            });
+        const courses = await Course.find({}).populate({ path: 'enrolledStudents', select: 'schoolId -_id' });
         res.status(200).json(courses);
     } catch (err) {
         res.status(500).json({ message: err.message });
     }
 };
 
-// GET course by ID
+// GET course by ID or courseName
 const getCourseById = async (req, res) => {
     try {
-        const course = await Course.findById(req.params.id).populate({
-                path: 'enrolledStudents',
-                select: 'schoolId -_id'  // Show schoolId instead of ID
-            });
-        if (!course) {
-            return res.status(404).json({ message: "Course not found" });
-        }
+        const course = await Course.findById(req.params.id).populate('enrolledStudents');
+        if (!course) return res.status(404).json({ message: "Course not found" });
         res.status(200).json(course);
     } catch (err) {
         res.status(500).json({ message: err.message });
     }
 };
 
-// GET courses by name
 const getCoursesByName = async (req, res) => {
     try {
-        const courses = await Courses.find({ name: req.params.name });
-        res.status(200).json(courses);
+        const course = await Course.findOne({ courseName: req.params.courseName }).populate('enrolledStudents');
+        if (!course) return res.status(404).json({ message: "Course not found" });
+        res.status(200).json(course);
     } catch (err) {
         res.status(500).json({ message: err.message });
     }
 };
 
-// POST create a new course
+// POST create a new course (single or bulk insert)
 const createCourse = async (req, res) => {
     try {
-        console.log("Received course data:", req.body); // Debugging log
+        console.log("Received course data:", req.body);
 
         if (Array.isArray(req.body)) {
             // Handle bulk insert
-            const newCourses = await Courses.insertMany(req.body);  // FIXED: Changed "Course" to "Courses"
+            const newCourses = await Course.insertMany(req.body);
             return res.status(201).json({ message: "Bulk insert successful", data: newCourses });
         } else {
             // Handle single insert
-            const newCourse = new Courses(req.body);  // FIXED: Changed "Course" to "Courses"
+            const newCourse = new Course(req.body);
             await newCourse.save();
             return res.status(201).json({ message: "Course created successfully", data: newCourse });
         }
@@ -60,35 +54,46 @@ const createCourse = async (req, res) => {
     }
 };
 
-// PUT update a course by ID
+// PUT update course by either ObjectId or courseName
 const updateCourse = async (req, res) => {
     try {
-        const updatedCourse = await Courses.findByIdAndUpdate(req.params.id, req.body, { new: true });
-        if (!updatedCourse) {
-            return res.status(404).json({ message: 'Course not found' });
+        const { id, courseName } = req.params;
+        
+        let filter;
+        if (id && mongoose.Types.ObjectId.isValid(id)) {
+            filter = { _id: id };
+        } else if (courseName) {
+            filter = { courseName: courseName };
+        } else {
+            return res.status(400).json({ message: "Invalid ID or Course Name" });
         }
-        res.status(200).json(updatedCourse);
+
+        const course = await Course.findOneAndUpdate(filter, req.body, { new: true, runValidators: true });
+
+        if (!course) return res.status(404).json({ message: "Course not found" });
+
+        res.status(200).json(course);
     } catch (err) {
         res.status(500).json({ message: err.message });
     }
 };
 
-// DELETE a course by courseName or ObjectId
+// DELETE a course by ObjectId or courseName
 const deleteCourse = async (req, res) => {
     try {
-        const { courseName, id } = req.params; // Allow deletion by either courseName or _id
+        const { id, courseName } = req.params;
+        
         let course;
-        if (courseName) {
-            course = await Course.findOneAndDelete({ courseName: courseName });
-        } else if (id) {
+        if (id && mongoose.Types.ObjectId.isValid(id)) {
             course = await Course.findByIdAndDelete(id);
+        } else if (courseName) {
+            course = await Course.findOneAndDelete({ courseName: courseName });
+        } else {
+            return res.status(400).json({ message: "Invalid ID or Course Name" });
         }
 
-        if (!course) {
-            return res.status(404).json({ message: "Course not found" });
-        }
+        if (!course) return res.status(404).json({ message: "Course not found" });
 
-        // Also remove this course from all students' registeredCourses
         await Student.updateMany(
             { registeredCourses: course._id },
             { $pull: { registeredCourses: course._id } }

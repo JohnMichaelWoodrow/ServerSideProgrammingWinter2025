@@ -2,6 +2,7 @@ const express = require('express');
 const {
     getStudents,
     getStudentById,
+    getStudentBySchoolId,
     createStudent,
     updateStudent,
     deleteStudent,
@@ -12,13 +13,13 @@ const {
 const studentRouter = express.Router();
 
 // Define routes
-studentRouter.get('/', getStudents);                
-studentRouter.get('/id/:id', getStudentById);        
-studentRouter.post('/', createStudent);               
-studentRouter.put('/id/:id', updateStudent);          
-studentRouter.delete('/id/:id', deleteStudent);
-studentRouter.delete('/schoolId/:schoolId', deleteStudent);
-studentRouter.post('/register', registerStudentForCourse);  // Fixed: Uses courseName instead of courseId
-studentRouter.delete('/register', unregisterStudentsFromCourses);  
+studentRouter.get('/', getStudents);
+studentRouter.get('/id/:id', getStudentById);
+studentRouter.get('/schoolId/:schoolId', getStudentBySchoolId);
+studentRouter.post('/', createStudent);
+studentRouter.put('/:id?/:schoolId?', updateStudent);
+studentRouter.delete('/:id?/:schoolId?', deleteStudent);
+studentRouter.post('/register', registerStudentForCourse);
+studentRouter.delete('/register', unregisterStudentsFromCourses);
 
 module.exports = studentRouter;
