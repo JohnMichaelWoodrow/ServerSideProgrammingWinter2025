@@ -16,6 +16,6 @@ studentRouter.get('/id/:id', getStudentById);
 studentRouter.post('/', createStudent);               
 studentRouter.put('/id/:id', updateStudent);          
 studentRouter.delete('/id/:id', deleteStudent);
-studentRouter.post('/register', registerStudentForCourse);        
+studentRouter.post('/register', registerStudentForCourse);  // Fixed: Uses courseName instead of courseId
 
 module.exports = studentRouter;

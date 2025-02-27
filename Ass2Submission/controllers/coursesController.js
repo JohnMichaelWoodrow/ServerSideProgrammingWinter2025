@@ -3,7 +3,10 @@ const Courses = require('../models/coursesModel');
 // GET all courses
 const getCourses = async (req, res) => {
     try {
-        const courses = await Courses.find({});
+        const courses = await Courses.find({}).populate({
+                path: 'enrolledStudents',
+                select: 'schoolId -_id'  // Excludes ID field
+            });
         res.status(200).json(courses);
     } catch (err) {
         res.status(500).json({ message: err.message });
@@ -13,9 +16,12 @@ const getCourses = async (req, res) => {
 // GET course by ID
 const getCourseById = async (req, res) => {
     try {
-        const course = await Courses.findById(req.params.id);
+        const course = await Course.findById(req.params.id).populate({
+                path: 'enrolledStudents',
+                select: 'schoolId -_id'  // Show schoolId instead of ID
+            });
         if (!course) {
-            return res.status(404).json({ message: 'Course not found' });
+            return res.status(404).json({ message: "Course not found" });
         }
         res.status(200).json(course);
     } catch (err) {
@@ -36,10 +42,20 @@ const getCoursesByName = async (req, res) => {
 // POST create a new course
 const createCourse = async (req, res) => {
     try {
-        const newCourse = new Courses(req.body);
-        await newCourse.save();
-        res.status(201).json(newCourse);
+        console.log("Received course data:", req.body); // Debugging log
+
+        if (Array.isArray(req.body)) {
+            // Handle bulk insert
+            const newCourses = await Courses.insertMany(req.body);  // FIXED: Changed "Course" to "Courses"
+            return res.status(201).json({ message: "Bulk insert successful", data: newCourses });
+        } else {
+            // Handle single insert
+            const newCourse = new Courses(req.body);  // FIXED: Changed "Course" to "Courses"
+            await newCourse.save();
+            return res.status(201).json({ message: "Course created successfully", data: newCourse });
+        }
     } catch (err) {
+        console.error("Error inserting course:", err.message);
         res.status(400).json({ message: err.message });
     }
 };

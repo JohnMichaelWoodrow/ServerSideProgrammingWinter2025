@@ -66,18 +66,34 @@ const updateStudent = async (req, res) => {
     }
 };
 
-// DELETE a student by ID
+// DELETE a student by schoolId or ObjectId
 const deleteStudent = async (req, res) => {
     try {
-        const deletedStudent = await Student.findByIdAndDelete(req.params.id);
-        if (!deletedStudent) {
+        const { schoolId, id } = req.params; // Allow deletion by either schoolId or _id
+
+        let student;
+        if (schoolId) {
+            student = await Student.findOneAndDelete({ schoolId: schoolId });
+        } else if (id) {
+            student = await Student.findByIdAndDelete(id);
+        }
+
+        if (!student) {
             return res.status(404).json({ message: "Student not found" });
         }
-        res.status(200).json(deletedStudent);
+
+        // Also remove student from any enrolled courses
+        await Course.updateMany(
+            { enrolledStudents: student._id },
+            { $pull: { enrolledStudents: student._id } }
+        );
+
+        return res.status(200).json({ message: `Student ${student.firstName} ${student.lastName} deleted` });
     } catch (err) {
         res.status(500).json({ message: err.message });
     }
 };
+
 
 //  Register a student to a course
 const registerStudentForCourse = async (req, res) => {
@@ -172,6 +188,51 @@ const registerStudentForCourse = async (req, res) => {
     }
 };
 
+const unregisterStudentsFromCourses = async (req, res) => {
+    try {
+        if (!Array.isArray(req.body)) {
+            return res.status(400).json({ message: "Invalid format. Expected an array." });
+        }
+
+        let results = [];
+        for (const reg of req.body) {
+            const { schoolId, courseName } = reg;
+
+            const student = await Student.findOne({ schoolId: schoolId });
+            if (!student) {
+                results.push({ schoolId, courseName, status: `Student with schoolId ${schoolId} not found` });
+                continue;
+            }
+
+            const course = await Course.findOne({ courseName: courseName });
+            if (!course) {
+                results.push({ schoolId, courseName, status: `Course ${courseName} not found` });
+                continue;
+            }
+
+            // Remove course from student's registeredCourses array
+            student.registeredCourses = student.registeredCourses.filter(
+                (courseId) => !courseId.equals(course._id)
+            );
+
+            // Remove student from course's enrolledStudents array
+            course.enrolledStudents = course.enrolledStudents.filter(
+                (studentId) => !studentId.equals(student._id)
+            );
+
+            await student.save();
+            await course.save();
+
+            results.push({ schoolId, courseName, status: "Unregistered successfully" });
+        }
+
+        return res.status(200).json(results);
+    } catch (error) {
+        res.status(400).json({ message: error.message });
+    }
+};
+
+
 
 
 module.exports = {
@@ -180,5 +241,6 @@ module.exports = {
     createStudent,
     updateStudent,
     deleteStudent,
-    registerStudentForCourse
+    registerStudentForCourse,
+    unregisterStudentsFromCourses
 };

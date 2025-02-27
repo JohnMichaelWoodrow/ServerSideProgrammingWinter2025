@@ -20,7 +20,7 @@ const SessionSubSchema = new mongoose.Schema({
 });
 
 const CourseSchema = new mongoose.Schema({
-    name: {
+    courseName: {
         type: String,
         required: [true, "Please enter the course name"]
     },
@@ -32,7 +32,7 @@ const CourseSchema = new mongoose.Schema({
         type: [SessionSubSchema],
         default: []
     },
-    enrolledStudents: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Student' }]
+    enrolledStudents: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Student' }]  
 }, {
     timestamps: true
 });

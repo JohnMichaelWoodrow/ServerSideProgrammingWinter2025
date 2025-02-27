@@ -73,18 +73,33 @@ const updateCourse = async (req, res) => {
     }
 };
 
-// DELETE a course by ID
+// DELETE a course by courseName or ObjectId
 const deleteCourse = async (req, res) => {
     try {
-        const deletedCourse = await Courses.findByIdAndDelete(req.params.id);
-        if (!deletedCourse) {
-            return res.status(404).json({ message: 'Course not found' });
+        const { courseName, id } = req.params; // Allow deletion by either courseName or _id
+        let course;
+        if (courseName) {
+            course = await Course.findOneAndDelete({ courseName: courseName });
+        } else if (id) {
+            course = await Course.findByIdAndDelete(id);
         }
-        res.status(200).json(deletedCourse);
+
+        if (!course) {
+            return res.status(404).json({ message: "Course not found" });
+        }
+
+        // Also remove this course from all students' registeredCourses
+        await Student.updateMany(
+            { registeredCourses: course._id },
+            { $pull: { registeredCourses: course._id } }
+        );
+
+        return res.status(200).json({ message: `Course ${course.courseName} deleted` });
     } catch (err) {
         res.status(500).json({ message: err.message });
     }
 };
+
 
 module.exports = {
     getCourses,

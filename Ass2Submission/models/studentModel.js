@@ -19,25 +19,25 @@ const StudentSchema = new mongoose.Schema({
         required: [true, "Date of birth is required"]
     },
     addressUnit: {
-        String
+        type: Number  
     },
     addressStreet: {
-        String
+        type: String  
     },
     addressCity: {
-    String
+        type: String  
     },
     addressStateProv: {
-        String
+        type: String  
     },
     addressCountry: {
-        String
+        type: String  
     },
     addressPostCode: {
-        String
+        type: String  
     },
     phone: {
-        String
+        type: String  
     },
     email: {
         type: String,
@@ -45,20 +45,25 @@ const StudentSchema = new mongoose.Schema({
         unique: true
     },
     emergContactName: {
-    String
+        type: String  
     },
     emergContactPhone: {
-        String
+        type: String  
     },
     emergContactRel: {
-        String
+        type: String  
     },
     program: {
-        String
+        type: String 
     },
+    startDate: {
+        type: Date  
+    },
+    // Should be referenced by the object ID to maintain proper relationships.
     registeredCourses: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Course' }]
 }, {
     timestamps: true
 });
 
 module.exports = mongoose.model('Student', StudentSchema, 'students');
+
