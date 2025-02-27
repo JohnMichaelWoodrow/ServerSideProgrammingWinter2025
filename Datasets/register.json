@@ -1,0 +1,111 @@
+[
+    {
+        "schoolId":"2024010001",
+        "courseName":"CP1000"
+    },
+    {
+        "schoolId":"2024010001",
+        "courseName":"CP1020"
+    },
+    {
+        "schoolId":"2024010001",
+        "courseName":"CP1040"
+    },
+
+    {
+        "schoolId":"2024010002",
+        "courseName":"CP1000"
+    },
+    {
+        "schoolId":"2024010002",
+        "courseName":"CP1020"
+    },
+    {
+        "schoolId":"2024010002",
+        "courseName":"CP1040"
+    },
+
+    {
+        "schoolId":"2024010003",
+        "courseName":"CP1000"
+    },
+    {
+        "schoolId":"2024010003",
+        "courseName":"CP1020"
+    },
+    {
+        "schoolId":"2024010003",
+        "courseName":"CP1040"
+    },
+
+    {
+        "schoolId":"2023010004",
+        "courseName":"CP2010"
+    },
+    {
+        "schoolId":"2023010004",
+        "courseName":"CP2030"
+    },
+    {
+        "schoolId":"2023010004",
+        "courseName":"CP2040"
+    },
+
+    {
+        "schoolId":"2023010005",
+        "courseName":"CP2010"
+    },
+    {
+        "schoolId":"2023010005",
+        "courseName":"CP2030"
+    },
+    {
+        "schoolId":"2023010005",
+        "courseName":"CP2040"
+    },
+
+    {
+        "schoolId":"2023010006",
+        "courseName":"CP2010"
+    },
+    {
+        "schoolId":"2023010006",
+        "courseName":"CP2030"
+    },
+    {
+        "schoolId":"2023010006",
+        "courseName":"CP2040"
+    },
+
+    {
+        "schoolId":"2022010007",
+        "courseName":"CP3010"
+    },
+    {
+        "schoolId":"2022010007",
+        "courseName":"CP3040"
+    },
+    {
+        "schoolId":"2022010007",
+        "courseName":"CP3100"
+    },
+
+    {
+        "schoolId":"2021010007",
+        "courseName":"CP3100"
+    },
+    {
+        "schoolId":"2022010007",
+        "courseName":"CP3100"
+    },
+    {
+        "schoolId":"2022010007",
+        "courseName":"CP3000"
+    },
+    {
+        "schoolId":"2022010007",
+        "courseName":"CP2010"
+    }
+
+
+]

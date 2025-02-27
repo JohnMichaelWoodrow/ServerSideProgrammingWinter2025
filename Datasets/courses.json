@@ -1,0 +1,200 @@
+[
+    {
+        "courseName": "CP1000",
+        "courseTitle": "Computer Essentials",
+        "sessions": [
+            {
+                "day": 1,
+                "startTime": 830,
+                "duration": 100,
+                "room": "k102"
+            },
+            {
+                "day": 2,
+                "startTime": 830,
+                "duration": 100,
+                "room": "k102"
+            }
+        ]
+    },
+    {
+        "courseName": "CP1020",
+        "courseTitle": "Principles of Data Analysis",
+        "sessions": [
+            {
+                "day": 3,
+                "startTime": 1030,
+                "duration": 100,
+                "room": "k102"
+            },
+            {
+                "day": 4,
+                "startTime": 1030,
+                "duration": 100,
+                "room": "k102"
+            }
+        ]
+    },
+    {
+        "courseName": "CP1040",
+        "courseTitle": "Programming I",
+        "sessions": [
+            {
+                "day": 5,
+                "startTime": 830,
+                "duration": 100,
+                "room": "k102"
+            },
+            {
+                "day": 1,
+                "startTime": 1230,
+                "duration": 100,
+                "room": "k102"
+            }
+        ]
+    },
+    {
+        "courseName": "CP1050",
+        "courseTitle": "Computer Architecture",
+        "sessions": [
+            {
+                "day": 2,
+                "startTime": 1230,
+                "duration": 100,
+                "room": "k102"
+            },
+            {
+                "day": 3,
+                "startTime": 1230,
+                "duration": 100,
+                "room": "k102"
+            }
+        ]
+    },
+    {
+        "courseName": "CP1210",
+        "courseTitle": "JavaScript",
+        "sessions": [
+            {
+                "day": 4,
+                "startTime": 1230,
+                "duration": 100,
+                "room": "k102"
+            },
+            {
+                "day": 5,
+                "startTime": 1230,
+                "duration": 100,
+                "room": "k102"
+            }
+        ]
+    },
+    {
+        "courseName": "CP2010",
+        "courseTitle": "Frameworks",
+        "sessions": [
+            {
+                "day": 1,
+                "startTime": 830,
+                "duration": 100,
+                "room": "k102"
+            },
+            {
+                "day": 2,
+                "startTime": 830,
+                "duration": 100,
+                "room": "k102"
+            }
+        ]
+    },
+    {
+        "courseName": "CP2030",
+        "courseTitle": "AWS Cloud Developing",
+        "sessions": [
+            {
+                "day": 3,
+                "startTime": 830,
+                "duration": 100,
+                "room": "k102"
+            },
+            {
+                "day": 4,
+                "startTime": 830,
+                "duration": 100,
+                "room": "k102"
+            }
+        ]
+    },
+    {
+        "courseName": "CP2040",
+        "courseTitle": "Programming II",
+        "sessions": [
+            {
+                "day": 5,
+                "startTime": 830,
+                "duration": 100,
+                "room": "k102"
+            },
+            {
+                "day": 1,
+                "startTime": 1230,
+                "duration": 100,
+                "room": "k102"
+            }
+        ]
+    },
+    {
+        "courseName": "CP3010",
+        "courseTitle": "Server-Side Programming",
+        "sessions": [
+            {
+                "day": 1,
+                "startTime": 830,
+                "duration": 100,
+                "room": "k102"
+            },
+            {
+                "day": 2,
+                "startTime": 830,
+                "duration": 100,
+                "room": "k102"
+            }
+        ]
+    },
+    {
+        "courseName": "CP3040",
+        "courseTitle": "Programming II",
+        "sessions": [
+            {
+                "day": 3,
+                "startTime": 830,
+                "duration": 100,
+                "room": "k102"
+            },
+            {
+                "day": 4,
+                "startTime": 830,
+                "duration": 100,
+                "room": "k102"
+            }
+        ]
+    },
+    {
+        "courseName": "CP3100",
+        "courseTitle": "MVC Feamework Development",
+        "sessions": [
+            {
+                "day": 5,
+                "startTime": 830,
+                "duration": 100,
+                "room": "k102"
+            },
+            {
+                "day": 1,
+                "startTime": 1230,
+                "duration": 100,
+                "room": "k102"
+            }
+        ]
+    }
+]
