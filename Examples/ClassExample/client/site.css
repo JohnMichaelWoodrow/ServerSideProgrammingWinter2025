@@ -1,0 +1,12 @@
+.sessionLabel {
+    font-size: 1em;
+    color: #8400ff;
+    display: inline-block;
+    text-align:right;
+    margin-right:2px;
+    margin-left:20px;
+}
+
+.sessionInput {
+    width: 3em;
+}

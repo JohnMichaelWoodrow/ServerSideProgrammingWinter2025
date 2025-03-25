@@ -1,0 +1,21 @@
+label {
+    display:inline-block;
+    width:150px;
+    text-align:right;
+    margin-right:3px;
+    margin-bottom:10px;
+}
+
+input {
+    display:inline-block;
+    width:185px;
+}
+
+button {
+    margin-right: 3px;
+    margin-bottom:10px;
+}
+
+#queryStatus {
+    width:338px;
+}
