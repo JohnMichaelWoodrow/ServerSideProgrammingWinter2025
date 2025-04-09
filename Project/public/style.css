@@ -1,0 +1,92 @@
+body {
+  background-color: #0d1b2a;
+  color: white;
+  font-family: Arial, sans-serif;
+  text-align: center;
+  padding: 20px;
+}
+
+h1 {
+  margin-bottom: 20px;
+}
+
+.controls {
+  margin-bottom: 20px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  justify-content: center;
+}
+
+button {
+  background-color: #1b263b;
+  color: white;
+  padding: 10px 15px;
+  border: none;
+  border-radius: 6px;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+button:hover {
+  background-color: #415a77;
+}
+
+.board-wrapper {
+  display: flex;
+  gap: 30px;
+  justify-content: center;
+  margin-bottom: 20px;
+}
+
+.board {
+  display: grid;
+  grid-template-columns: repeat(10, 30px);
+  grid-template-rows: repeat(10, 30px);
+  gap: 2px;
+}
+
+.cell {
+  width: 30px;
+  height: 30px;
+  background-color: #1b263b;
+  border: 1px solid #778da9;
+  cursor: pointer;
+}
+
+.cell.guess {
+  background-color: #0f5132;
+}
+
+.cell.hit {
+  background-color: #ff4d4d;
+}
+
+.cell.miss {
+  background-color: #cccccc;
+}
+
+.cell.server-guess {
+  background-color: #ffd166;
+}
+
+#output {
+  white-space: normal;
+  text-align: left;
+  background: #1b263b;
+  padding: 15px;
+  border-radius: 6px;
+  width: 80%;
+  margin: auto;
+  max-width: 800px;
+  font-family: monospace;
+  font-size: 14px;
+  line-height: 1.4;
+}
+
+.cell.hit,
+.cell.sunk,
+.cell.miss {
+  pointer-events: none;
+}
+
