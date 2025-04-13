@@ -1,0 +1,86 @@
+INSTRUCTIONS
+
+1. Requirements:
+- Node.js (version 16 or higher is recommended)
+- A modern web browser (Chrome, Firefox, etc.)
+
+2. Installation:
+- Unzip the project folder.
+- Open a terminal or command prompt in the root project folder.
+- Run the following command to install dependencies:
+
+npm install
+
+3. Running the Project:
+- Start the server with the following command:
+
+node battleship.js
+
+- By default, it runs at http://localhost:3000
+- Open that URL in your browser to play the game.
+
+---
+
+How to Use / Play the Battleship Game
+
+1. Starting a New Game:
+- When the webpage loads, a new game session automatically begins.
+
+2. Ship Placement:
+- Click cells in your grid to place your ships manually.
+- Fleet includes:
+  - Destroyer (2 cells)
+  - Submarine or Cruiser (3 cells)
+  - Battleship (4 cells)
+  - Carrier (5 cells)
+- Ships cannot overlap or go out of the 10x10 grid.
+- The game does not store your ship placements you must remember them yourself.
+
+3. Taking Turns:
+- Click enemy grid cells to attack.
+- Hits and misses are shown visually.
+- Turns alternate between the player and the server.
+
+4. Visual Indicators:
+- Hits are marked (for example, with an X).
+- Sunk ships may appear in a different color or style.
+
+5. Game End:
+- The game ends when all enemy ships are sunk.
+- A win or lose message is shown.
+
+---
+
+Important Note About Player Ship Tracking and Server Attacks
+
+- The game does not store or validate your ship locations.
+- You must remember where your ships are.
+
+- When the server takes a turn and attacks your board:
+  - A red cell appears to show the guess.
+  - If that guess hits one of your ships, you must manually mark it by selecting hit.
+  - If it's a miss, select miss.
+
+- The game does not automatically check whether the server hit or missed your ships.
+- This game runs on an honor system for the player’s side.
+
+---
+
+Game Logic Overview (from battleshipEngine.js)
+
+- The game uses two 10x10 grids (player and server).
+- Ships are tracked as lists of coordinates on the server side only.
+
+- Attacks:
+  - Server checks if selected coordinates hit its own ships.
+  - If a ship has all its cells hit, it is marked as sunk.
+
+- Victory Condition:
+  - The game ends when one side has no ships left.
+
+- Server Endpoints:
+  - /new          - Starts a new game
+  - /hit?x=3&y=5  - Sends an attack to cell (3,5)
+  - /status       - Returns current game state
+  - /reset        - Resets the board
+  - /concede      - Player forfeits the game
