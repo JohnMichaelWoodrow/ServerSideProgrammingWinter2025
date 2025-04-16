@@ -19,7 +19,7 @@ class BattleshipGame {
     this.startTime = Date.now();
     this.active = true;
     this.playerHits = 0;
-    this.maxPlayerHP = 17; // 2+3+3+4+5 from your fleet
+    this.maxPlayerHP = 17; // 2+3+3+4+5 from user fleet
 
     // Place ships randomly on server board
     for (let i = 0; i < fleet.length; i++) {

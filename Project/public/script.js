@@ -2,7 +2,7 @@ const playerBoard = document.getElementById('playerBoard');
 const serverBoard = document.getElementById('serverBoard');
 const output = document.getElementById('output');
 const api = '/battleship';
-// Auto-reset on page load so new game always works
+// Auto reset on page load so new game always works
 fetch(`${api}/reset`);
 let gameActive = false;
 let cycle = 0;
